@@ -22,6 +22,10 @@
 
 #include "SampleAddIn.h"
 
+#ifdef _WINDOWS
+#pragma warning (disable : 4311 4302)
+#endif
+
 const WCHAR_T *GetClassNames() {
     static char16_t cls_names[] = u"Sample|SampleAlias";
     return reinterpret_cast<WCHAR_T *>(cls_names);

@@ -24,6 +24,10 @@
 
 #include "Component.h"
 
+#ifdef _WINDOWS
+#pragma warning (disable : 4267)
+#endif
+
 bool Component::Init(void *connection_) {
     connection = static_cast<IAddInDefBase *>(connection_);
     return connection != nullptr;
