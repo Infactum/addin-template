@@ -327,6 +327,8 @@ variant_t Component::toStlVariant(tVariant src) {
             return src.bVal;
         case VTYPE_BLOB:
             return std::vector<char>(src.pstrVal, src.pstrVal + src.strLen);
+        case VTYPE_TM:
+            return src.tmVal;
         default:
             throw std::bad_cast();
     }
