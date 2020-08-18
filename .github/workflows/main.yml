@@ -10,9 +10,9 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         include:
           - os: windows-latest
-            generator: Visual Studio 2019 x64
+            generator: VS16Win64
           - os: windows-latest
-            generator: Visual Studio 2019 Win32
+            generator: VS16Win32
           - os: ubuntu-latest
             generator: Ninja
 
