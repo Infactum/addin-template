@@ -358,12 +358,12 @@ void Component::storeVariable(const variant_t &src, tVariant &dst) {
                 dst.vt = VTYPE_BOOL;
                 dst.bVal = v;
             },
-            [&](const std::string &v) { storeVariable(v, dst); },
-            [&](const std::vector<char> &v) { storeVariable(v, dst); },
             [&](const std::tm &v) {
                 dst.vt = VTYPE_TM;
                 dst.tmVal = v;
-            }
+            },
+            [&](const std::string &v) { storeVariable(v, dst); },
+            [&](const std::vector<char> &v) { storeVariable(v, dst); }
     }, src);
 
 }

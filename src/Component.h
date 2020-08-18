@@ -46,8 +46,8 @@ typedef std::variant<
         double,
         bool,
         std::string,
-        std::vector<char>,
-        std::tm
+        std::tm,
+        std::vector<char>
 > variant_t;
 
 class Component : public IComponentBase {
