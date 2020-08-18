@@ -116,6 +116,10 @@ variant_t SampleAddIn::currentDate() {
     using namespace std;
     tm current{};
     time_t t = time(nullptr);
+#ifdef _WINDOWS
     localtime_s(&current, &t);
+#else
+    localtime_r(&t, &current);
+#endif
     return current;
 }
