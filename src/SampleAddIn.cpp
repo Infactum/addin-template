@@ -18,6 +18,8 @@
  */
 
 #include <chrono>
+#include <iomanip>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -43,6 +45,7 @@ SampleAddIn::SampleAddIn() {
     // Lambdas as method handlers are not supported.
     AddMethod(L"Add", L"Сложить", this, &SampleAddIn::add);
     AddMethod(L"Message", L"Сообщить", this, &SampleAddIn::message);
+    AddMethod(L"CurrentDate", L"ТекущаяДата", this, &SampleAddIn::currentDate);
     AddMethod(L"Assign", L"Присвоить", this, &SampleAddIn::assign);
     AddMethod(L"SamplePropertyValue", L"ЗначениеСвойстваОбразца", this, &SampleAddIn::samplePropertyValue);
 
@@ -80,6 +83,12 @@ void SampleAddIn::message(const variant_t &msg) {
             [&](const bool &v) {
                 AddError(ADDIN_E_INFO, extensionName(), std::string(v ? u8"Истина" : u8"Ложь"), false);
             },
+            [&](const std::tm &v) {
+                std::ostringstream oss;
+                oss.imbue(std::locale("ru_RU.utf8"));
+                oss << std::put_time(&v, "%c");
+                AddError(ADDIN_E_INFO, extensionName(), oss.str(), false);
+            },
             [&](const std::vector<char> &v) {},
             [&](const std::monostate &) {}
     }, msg);
@@ -101,4 +110,12 @@ void SampleAddIn::assign(variant_t &out) {
 // due to unwanted data copying
 variant_t SampleAddIn::samplePropertyValue() {
     return *sample_property;
+}
+
+variant_t SampleAddIn::currentDate() {
+    using namespace std;
+    tm current{};
+    time_t t = time(nullptr);
+    localtime_s(&current, &t);
+    return current;
 }
