@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        arch: [x86, x64]
+        include:
+          - os: windows-latest
+            arch: x64
+            generator: VS16Win64
+          - os: windows-latest
+            arch: x86
+            generator: VS16Win32
+          - os: ubuntu-latest
+            generator: Ninja
+        exclude:
+          - os: ubuntu-latest
+            arch: x86
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - run: sudo apt install uuid-dev
+        if: matrix.os == 'ubuntu-latest'
+      
+      - uses: lukka/run-cmake@v2
+        id: runcmake_cmd
+        with:
+          buildDirectory: ${{ runner.workspace }}/build
+          cmakeGenerator: ${{ matrix.generator }}
+          cmakeBuildType: Release

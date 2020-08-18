@@ -20,6 +20,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include <ctime>
 #include <functional>
 #include <map>
 #include <memory>
