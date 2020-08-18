@@ -32,21 +32,11 @@
 #include <IMemoryManager.h>
 #include <types.h>
 
-#ifdef CHRONO_DATE
-#include <chrono>
-#endif
-
 template<class... Ts>
 struct overloaded : Ts ... {
     using Ts::operator()...;
 };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
-#ifdef CHRONO_DATE
-typedef std::chrono::system_clock::time_point datetime;
-#else
-typedef std::tm datetime;
-#endif
 
 #define UNDEFINED std::monostate()
 
@@ -57,7 +47,7 @@ typedef std::variant<
         bool,
         std::string,
         std::vector<char>,
-        datetime
+        std::tm
 > variant_t;
 
 class Component : public IComponentBase {
@@ -140,10 +130,6 @@ private:
     static std::wstring toWstring(std::basic_string_view<WCHAR_T> src);
 
     static std::u16string toUTF16String(std::string_view src);
-
-    static datetime toDatetime(const tVariant& src);
-
-    static void fromDatetime(tVariant& dest, const datetime &src);
 
     void storeVariable(const std::string &src, tVariant &dst);
 
