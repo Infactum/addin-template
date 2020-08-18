@@ -1,3 +1,5 @@
+![CI](https://github.com/Infactum/addin-template/workflows/CI/badge.svg?branch=master)
+
 # Modern Native AddIn
 
 Custom implementation of Native AddIn template for 1C:Enterpise platform on modern C++.    
