@@ -285,7 +285,9 @@ void Component::AddProperty(const std::wstring &alias, const std::wstring &alias
                             std::function<std::shared_ptr<variant_t>(void)> getter,
                             std::function<void(variant_t &&)> setter) {
 
-    PropertyMeta meta{alias, alias_ru, (bool)getter, (bool)setter, std::move(getter), std::move(setter)};
+    bool is_readable = static_cast<bool>(getter);
+    bool is_writable = static_cast<bool>(setter);
+    PropertyMeta meta{alias, alias_ru, is_readable, is_writable, std::move(getter), std::move(setter)};
     properties_meta.push_back(std::move(meta));
 
 }
