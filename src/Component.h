@@ -52,6 +52,12 @@ typedef std::variant<
 class Component : public IComponentBase {
 public:
 
+    class LibraryMeta;
+
+    static LibraryMeta library;
+
+    Component(const std::u16string& name);
+
     bool ADDIN_API Init(void *connection_) final;
 
     bool ADDIN_API setMemManager(void *memory_manager_) final;
@@ -96,14 +102,13 @@ public:
                               const long array_size) final;
 
 protected:
-    virtual std::string extensionName() = 0;
+    WCHAR_T* extensionName() { return (WCHAR_T*)componentName.c_str(); }
 
-    void AddError(unsigned short code, const std::string &src, const std::string &msg, bool throw_excp);
+    void AddError(unsigned short code, const std::string &msg, bool throw_excp);
 
-    bool ExternalEvent(const std::string &src, const std::string &msg, const std::string &data);
+    bool ExternalEvent(const std::string &msg, const std::string &data);
 
     void AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
-                     bool is_readable, bool is_writable,
                      std::function<std::shared_ptr<variant_t>(void)> getter = nullptr,
                      std::function<void(variant_t &&)> setter = nullptr);
 
@@ -118,6 +123,8 @@ private:
     class PropertyMeta;
 
     class MethodMeta;
+
+    std::u16string componentName;
 
     template<size_t... Indices>
     static auto refTupleGen(std::vector<variant_t> &v, std::index_sequence<Indices...>);
@@ -212,6 +219,19 @@ void Component::AddMethod(const std::wstring &alias, const std::wstring &alias_r
     };
 
     methods_meta.push_back(std::move(meta));
+};
+
+using CreateComponent = Component * (*)(const std::u16string& name);
+
+class Component::LibraryMeta
+{
+public:
+    LibraryMeta();
+    void AddComponent(const std::u16string &name, CreateComponent func);
+    Component *createObject(const std::u16string &name);
+    std::u16string getComponentNames();
+private:
+    std::map<std::u16string, CreateComponent> components;
 };
 
 #endif //COMPONENT_H

@@ -26,11 +26,13 @@ class SampleAddIn final : public Component {
 public:
     const char *Version = u8"1.0.0";
 
-    SampleAddIn();
+    SampleAddIn(const std::u16string &name);
+
+    static Component* create(const std::u16string &name) {
+        return new SampleAddIn(name);
+    }
 
 private:
-    std::string extensionName() override;
-
     variant_t add(const variant_t &a, const variant_t &b);
 
     void message(const variant_t &msg);

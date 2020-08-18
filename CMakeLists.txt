@@ -11,10 +11,9 @@ option(OUT_PARAMS "Support output parameters" OFF)
 add_library(${TARGET} SHARED
         src/addin.def
         src/stdafx.h
-        src/dllmain.cpp
-        src/exports.cpp
         src/Component.cpp
         src/Component.h
+        src/Library.cpp
         src/SampleAddIn.cpp
         src/SampleAddIn.h)
 

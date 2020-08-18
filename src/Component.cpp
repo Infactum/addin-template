@@ -21,12 +21,31 @@
 #include <codecvt>
 #include <cwctype>
 #include <locale>
+#include <sstream>
 
 #include "Component.h"
 
 #ifdef _WINDOWS
+
+BOOL APIENTRY DllMain(HMODULE hModule,
+	DWORD ul_reason_for_call,
+	LPVOID lpReserved
+) {
+	switch (ul_reason_for_call) {
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+	default:
+		break;
+	}
+	return TRUE;
+}
+
 #pragma warning (disable : 4267)
 #endif
+
+Component::Component(const std::u16string& name): componentName(name) {}
 
 bool Component::Init(void *connection_) {
     connection = static_cast<IAddInDefBase *>(connection_);
@@ -52,7 +71,7 @@ bool Component::RegisterExtensionAs(WCHAR_T **ext_name) {
     auto name = extensionName();
 
     try {
-        storeVariable(name, ext_name);
+        storeVariable(componentName, ext_name);
     } catch (const std::bad_alloc &) {
         return false;
     }
@@ -110,10 +129,10 @@ bool Component::GetPropVal(const long num, tVariant *value) {
         auto tmp = properties_meta[num].getter();
         storeVariable(*tmp, *value);
     } catch (const std::exception &e) {
-        AddError(ADDIN_E_FAIL, extensionName(), e.what(), true);
+        AddError(ADDIN_E_FAIL, e.what(), true);
         return false;
     } catch (...) {
-        AddError(ADDIN_E_FAIL, extensionName(), UNKNOWN_EXCP, true);
+        AddError(ADDIN_E_FAIL, UNKNOWN_EXCP, true);
         return false;
     }
 
@@ -126,10 +145,10 @@ bool Component::SetPropVal(const long num, tVariant *value) {
         auto tmp = toStlVariant(*value);
         properties_meta[num].setter(std::move(tmp));
     } catch (const std::exception &e) {
-        AddError(ADDIN_E_FAIL, extensionName(), e.what(), true);
+        AddError(ADDIN_E_FAIL, e.what(), true);
         return false;
     } catch (...) {
-        AddError(ADDIN_E_FAIL, extensionName(), UNKNOWN_EXCP, true);
+        AddError(ADDIN_E_FAIL, UNKNOWN_EXCP, true);
         return false;
     }
 
@@ -219,10 +238,10 @@ bool Component::CallAsProc(const long method_num, tVariant *params, const long a
         storeParams(args, params);
 #endif
     } catch (const std::exception &e) {
-        AddError(ADDIN_E_FAIL, extensionName(), e.what(), true);
+        AddError(ADDIN_E_FAIL, e.what(), true);
         return false;
     } catch (...) {
-        AddError(ADDIN_E_FAIL, extensionName(), UNKNOWN_EXCP, true);
+        AddError(ADDIN_E_FAIL, UNKNOWN_EXCP, true);
         return false;
     }
 
@@ -239,10 +258,10 @@ bool Component::CallAsFunc(const long method_num, tVariant *ret_value, tVariant 
         storeParams(args, params);
 #endif
     } catch (const std::exception &e) {
-        AddError(ADDIN_E_FAIL, extensionName(), e.what(), true);
+        AddError(ADDIN_E_FAIL, e.what(), true);
         return false;
     } catch (...) {
-        AddError(ADDIN_E_FAIL, extensionName(), UNKNOWN_EXCP, true);
+        AddError(ADDIN_E_FAIL, UNKNOWN_EXCP, true);
         return false;
     }
 
@@ -250,31 +269,22 @@ bool Component::CallAsFunc(const long method_num, tVariant *ret_value, tVariant 
 
 }
 
-void Component::AddError(unsigned short code, const std::string &src, const std::string &msg, bool throw_excp) {
-    WCHAR_T *source = nullptr;
+void Component::AddError(unsigned short code, const std::string &msg, bool throw_excp) {
     WCHAR_T *descr = nullptr;
-
-    storeVariable(src, &source);
     storeVariable(msg, &descr);
-
-    connection->AddError(code, source, descr, throw_excp);
-
-    memory_manager->FreeMemory(reinterpret_cast<void **>(&source));
+    connection->AddError(code, (WCHAR_T*)componentName.c_str(), descr, throw_excp);
     memory_manager->FreeMemory(reinterpret_cast<void **>(&descr));
 }
 
-bool Component::ExternalEvent(const std::string &src, const std::string &msg, const std::string &data) {
-    WCHAR_T *wszSource = nullptr;
+bool Component::ExternalEvent(const std::string &msg, const std::string &data) {
     WCHAR_T *wszMessage = nullptr;
     WCHAR_T *wszData = nullptr;
 
-    storeVariable(src, &wszSource);
     storeVariable(msg, &wszMessage);
     storeVariable(data, &wszData);
 
-    auto success = connection->ExternalEvent(wszSource, wszMessage, wszData);
+    auto success = connection->ExternalEvent((WCHAR_T*)componentName.c_str(), wszMessage, wszData);
 
-    memory_manager->FreeMemory(reinterpret_cast<void **>(&wszSource));
     memory_manager->FreeMemory(reinterpret_cast<void **>(&wszMessage));
     memory_manager->FreeMemory(reinterpret_cast<void **>(&wszData));
 
@@ -282,15 +292,10 @@ bool Component::ExternalEvent(const std::string &src, const std::string &msg, co
 }
 
 void Component::AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
-                            bool is_readable, bool is_writable,
                             std::function<std::shared_ptr<variant_t>(void)> getter,
                             std::function<void(variant_t &&)> setter) {
 
-    if ((is_readable && !getter) || (is_writable && !setter)) {
-        return;
-    }
-
-    PropertyMeta meta{alias, alias_ru, is_readable, is_writable, std::move(getter), std::move(setter)};
+    PropertyMeta meta{ alias, alias_ru, getter != nullptr, setter != nullptr, std::move(getter), std::move(setter) };
     properties_meta.push_back(std::move(meta));
 
 }
@@ -302,7 +307,7 @@ void Component::AddProperty(const std::wstring &alias, const std::wstring &alias
         return;
     }
 
-    AddProperty(alias, alias_ru, true, true,
+    AddProperty(alias, alias_ru,
                 [storage]() { // getter
                     return storage;
                 },
@@ -454,4 +459,57 @@ std::u16string Component::toUTF16String(std::string_view src) {
     static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cvt_utf8_utf16;
     return cvt_utf8_utf16.from_bytes(src.data(), src.data() + src.size());
 #endif
+}
+
+Component::LibraryMeta Component::library;
+
+void Component::LibraryMeta::AddComponent(const std::u16string &name, CreateComponent func) {
+	components.insert(std::pair<std::u16string, CreateComponent>(name, func));
+}
+
+std::u16string Component::LibraryMeta::getComponentNames() {
+	const char16_t* const delim = u"|";
+	std::vector<std::u16string> names;
+	for (auto it = components.begin(); it != components.end(); ++it) names.push_back(it->first);
+	std::basic_ostringstream<char16_t, std::char_traits<char16_t>, std::allocator<char16_t>> imploded;
+	std::copy(names.begin(), names.end(), std::ostream_iterator<std::u16string, char16_t, std::char_traits<char16_t>>(imploded, delim));
+	std::u16string result = imploded.str();
+	result.pop_back();
+	return result;
+}
+
+Component* Component::LibraryMeta::createObject(const std::u16string &name) {
+	auto it = components.find(name);
+	if (it == components.end()) return nullptr;
+	return it->second(name);
+}
+
+#ifdef _WINDOWS
+#pragma warning (disable : 4311 4302)
+#endif
+
+const WCHAR_T* GetClassNames() {
+	static const std::u16string names = Component::library.getComponentNames();
+	return reinterpret_cast<WCHAR_T*>((char16_t*)names.c_str());
+}
+
+long GetClassObject(const WCHAR_T* clsName, IComponentBase** pInterface) {
+	if (*pInterface) {
+		return 0;
+	}
+	auto cls_name = std::u16string(reinterpret_cast<const char16_t*>(clsName));
+	return long(*pInterface = Component::library.createObject(cls_name));
+}
+
+long DestroyObject(IComponentBase** pInterface) {
+	if (!*pInterface) {
+		return -1;
+	}
+	delete* pInterface;
+	*pInterface = nullptr;
+	return 0;
+}
+
+AppCapabilities SetPlatformCapabilities(const AppCapabilities capabilities) {
+	return eAppCapabilitiesLast;
 }

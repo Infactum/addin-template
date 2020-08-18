@@ -24,17 +24,13 @@
 
 #include "SampleAddIn.h"
 
-std::string SampleAddIn::extensionName() {
-    return "Sample";
-}
-
-SampleAddIn::SampleAddIn() {
+SampleAddIn::SampleAddIn(const std::u16string& name) : Component(name) {
     // Universal property. Could store any supported by native api type.
     sample_property = std::make_shared<variant_t>();
     AddProperty(L"SampleProperty", L"ОбразецСвойства", sample_property);
 
     // Full featured property registration example
-    AddProperty(L"Version", L"ВерсияКомпоненты", true, false, [&]() {
+    AddProperty(L"Version", L"ВерсияКомпоненты", [&]() {
         auto s = std::string(Version);
         return std::make_shared<variant_t>(std::move(s));
     });
@@ -72,13 +68,13 @@ variant_t SampleAddIn::add(const variant_t &a, const variant_t &b) {
 
 void SampleAddIn::message(const variant_t &msg) {
     std::visit(overloaded{
-            [&](const std::string &v) { AddError(ADDIN_E_INFO, extensionName(), v, false); },
+            [&](const std::string &v) { AddError(ADDIN_E_INFO, v, false); },
             [&](const int32_t &v) {
-                AddError(ADDIN_E_INFO, extensionName(), std::to_string(static_cast<int>(v)), false);
+                AddError(ADDIN_E_INFO, std::to_string(static_cast<int>(v)), false);
             },
-            [&](const double &v) { AddError(ADDIN_E_INFO, extensionName(), std::to_string(v), false); },
+            [&](const double &v) { AddError(ADDIN_E_INFO, std::to_string(v), false); },
             [&](const bool &v) {
-                AddError(ADDIN_E_INFO, extensionName(), std::string(v ? u8"Истина" : u8"Ложь"), false);
+                AddError(ADDIN_E_INFO, std::string(v ? u8"Истина" : u8"Ложь"), false);
             },
             [&](const std::vector<char> &v) {},
             [&](const std::monostate &) {}
