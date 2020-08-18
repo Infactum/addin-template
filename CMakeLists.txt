@@ -33,6 +33,10 @@ endif ()
 target_include_directories(${TARGET} PRIVATE
         include)
 
+if (WIN32 AND NOT MSVC)
+    message(FATAL_ERROR "Must be compiled with MSVC on Windows")
+endif ()
+
 if (WIN32)
     if (STATIC_CRT)
         string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
