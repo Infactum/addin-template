@@ -41,6 +41,8 @@ private:
 
     variant_t samplePropertyValue();
 
+    variant_t currentDate();
+
     std::shared_ptr<variant_t> sample_property;
 };
 

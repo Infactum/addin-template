@@ -46,6 +46,7 @@ typedef std::variant<
         double,
         bool,
         std::string,
+        std::tm,
         std::vector<char>
 > variant_t;
 
