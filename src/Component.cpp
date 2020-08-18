@@ -68,7 +68,6 @@ void Component::SetLocale(const WCHAR_T *locale) {
 }
 
 bool Component::RegisterExtensionAs(WCHAR_T **ext_name) {
-    auto name = extensionName();
 
     try {
         storeVariable(componentName, ext_name);
