@@ -7,6 +7,7 @@ set(TARGET SampleAddIn)
 option(CASE_INSENSITIVE "Case insensitive method names" OFF)
 option(STATIC_CRT "Static CRT linkage" OFF)
 option(OUT_PARAMS "Support output parameters" OFF)
+option(CHRONO_DATE "Use chrono::time_point as datetime implementation" OFF)
 
 add_library(${TARGET} SHARED
         src/addin.def

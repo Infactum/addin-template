@@ -81,6 +81,7 @@ void SampleAddIn::message(const variant_t &msg) {
                 AddError(ADDIN_E_INFO, extensionName(), std::string(v ? u8"Истина" : u8"Ложь"), false);
             },
             [&](const std::vector<char> &v) {},
+            [&](const datetime &v) {},
             [&](const std::monostate &) {}
     }, msg);
 }

@@ -21,8 +21,12 @@
 #include <codecvt>
 #include <cwctype>
 #include <locale>
-
 #include "Component.h"
+
+#ifdef CHRONO_DATE
+#include <chrono>
+#include <time.h>
+#endif
 
 #ifdef _WINDOWS
 #pragma warning (disable : 4267)
@@ -328,7 +332,7 @@ variant_t Component::toStlVariant(tVariant src) {
         case VTYPE_BLOB:
             return std::vector<char>(src.pstrVal, src.pstrVal + src.strLen);
         case VTYPE_TM:
-            return src.tmVal;
+            return toDatetime(src);
         default:
             throw std::bad_cast();
     }
@@ -360,9 +364,8 @@ void Component::storeVariable(const variant_t &src, tVariant &dst) {
             },
             [&](const std::string &v) { storeVariable(v, dst); },
             [&](const std::vector<char> &v) { storeVariable(v, dst); },
-            [&](const std::tm &v) {
-                dst.vt = VTYPE_TM;
-                dst.tmVal = v;
+            [&](const datetime &v) {
+                fromDatetime(dst, v);
             }
     }, src);
 
@@ -459,5 +462,25 @@ std::u16string Component::toUTF16String(std::string_view src) {
 #else
     static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cvt_utf8_utf16;
     return cvt_utf8_utf16.from_bytes(src.data(), src.data() + src.size());
+#endif
+}
+
+inline datetime Component::toDatetime(const tVariant &src) {
+#ifdef CHRONO_DATE
+    auto tmVal = src.tmVal;
+    return std::chrono::system_clock::from_time_t(std::mktime(&tmVal));
+#else
+    return src.tmVal;
+#endif
+}
+
+inline void Component::fromDatetime(tVariant &dst, const datetime &src) {
+#ifdef CHRONO_DATE
+    auto time = std::chrono::system_clock::to_time_t(src);
+    dst.vt = VTYPE_TM;
+    localtime_s(&dst.tmVal, &time);
+#else
+    dst.vt = VTYPE_TM;
+    dst.tmVal = src;
 #endif
 }
