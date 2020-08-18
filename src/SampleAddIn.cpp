@@ -34,7 +34,7 @@ SampleAddIn::SampleAddIn() {
     AddProperty(L"SampleProperty", L"ОбразецСвойства", sample_property);
 
     // Full featured property registration example
-    AddProperty(L"Version", L"ВерсияКомпоненты", true, false, [&]() {
+    AddProperty(L"Version", L"ВерсияКомпоненты", [&]() {
         auto s = std::string(Version);
         return std::make_shared<variant_t>(std::move(s));
     });

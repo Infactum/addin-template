@@ -103,7 +103,6 @@ protected:
     bool ExternalEvent(const std::string &src, const std::string &msg, const std::string &data);
 
     void AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
-                     bool is_readable, bool is_writable,
                      std::function<std::shared_ptr<variant_t>(void)> getter = nullptr,
                      std::function<void(variant_t &&)> setter = nullptr);
 
