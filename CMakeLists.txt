@@ -33,7 +33,7 @@ endif ()
 target_include_directories(${TARGET} PRIVATE
         include)
 
-if (MSVC)
+if (WIN32)
     if (STATIC_CRT)
         string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
         string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
