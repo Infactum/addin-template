@@ -11,7 +11,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+      
+      - run: sudo apt install uuid-dev
+        if: matrix.os == 'ubuntu-latest'
+      
       - uses: lukka/run-cmake@v2
         id: runcmake_cmd
         with:
