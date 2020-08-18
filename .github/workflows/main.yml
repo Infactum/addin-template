@@ -8,14 +8,19 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
+        arch: [x86, x64]
         include:
           - os: windows-latest
+            arch: x64
             generator: VS16Win64
           - os: windows-latest
+            arch: x86
             generator: VS16Win32
           - os: ubuntu-latest
             generator: Ninja
-
+        exclude:
+          - os: ubuntu-latest
+            arch: x86
 
     steps:
       - uses: actions/checkout@v2
