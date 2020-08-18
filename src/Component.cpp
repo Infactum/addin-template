@@ -282,14 +282,11 @@ bool Component::ExternalEvent(const std::string &src, const std::string &msg, co
 }
 
 void Component::AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
-                            bool is_readable, bool is_writable,
                             std::function<std::shared_ptr<variant_t>(void)> getter,
                             std::function<void(variant_t &&)> setter) {
 
-    if ((is_readable && !getter) || (is_writable && !setter)) {
-        return;
-    }
-
+    bool is_readable = static_cast<bool>(getter);
+    bool is_writable = static_cast<bool>(setter);
     PropertyMeta meta{alias, alias_ru, is_readable, is_writable, std::move(getter), std::move(setter)};
     properties_meta.push_back(std::move(meta));
 
@@ -302,7 +299,7 @@ void Component::AddProperty(const std::wstring &alias, const std::wstring &alias
         return;
     }
 
-    AddProperty(alias, alias_ru, true, true,
+    AddProperty(alias, alias_ru,
                 [storage]() { // getter
                     return storage;
                 },
