@@ -1,0 +1,19 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: lukka/run-cmake@v2
+        id: runcmake_cmd
+        with:
+          buildDirectory: ${{ runner.workspace }}/build
+          cmakeBuildType: Release
