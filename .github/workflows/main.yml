@@ -8,6 +8,14 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            generator: Visual Studio 2019 x64
+          - os: windows-latest
+            generator: Visual Studio 2019 Win32
+          - os: ubuntu-latest
+            generator: Ninja
+
 
     steps:
       - uses: actions/checkout@v2
@@ -19,4 +27,5 @@ jobs:
         id: runcmake_cmd
         with:
           buildDirectory: ${{ runner.workspace }}/build
+          cmakeGenerator: ${{ matrix.generator }}
           cmakeBuildType: Release
