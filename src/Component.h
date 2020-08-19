@@ -167,8 +167,6 @@ public:
 
     std::wstring alias;
     std::wstring alias_ru;
-    bool is_readable;
-    bool is_writable;
     std::function<std::shared_ptr<variant_t>(void)> getter;
     std::function<void(variant_t &&)> setter;
 };
