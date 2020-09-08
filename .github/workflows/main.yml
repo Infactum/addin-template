@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         arch: [x86, x64]
         include:
           - os: windows-latest
@@ -18,8 +18,12 @@ jobs:
             generator: VS16Win32
           - os: ubuntu-latest
             generator: Ninja
+          - os: macos-latest
+            generator: XCode
         exclude:
           - os: ubuntu-latest
+            arch: x86
+          - os: macos-latest
             arch: x86
 
     steps:
