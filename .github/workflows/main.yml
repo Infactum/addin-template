@@ -19,7 +19,7 @@ jobs:
           - os: ubuntu-latest
             generator: Ninja
           - os: macos-latest
-            generator: XCode
+            generator: Ninja
         exclude:
           - os: ubuntu-latest
             arch: x86
