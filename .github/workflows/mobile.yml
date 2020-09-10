@@ -1,4 +1,4 @@
-name: Android
+name: Mobile CI
 
 on: [push, pull_request]
 
