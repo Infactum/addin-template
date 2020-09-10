@@ -16,6 +16,7 @@ jobs:
         id: runcmake_cmd
         with:
           buildDirectory: ${{ runner.workspace }}/build
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced 
           cmakeBuildType: Release
           cmakeToolchainPath: ${ANDROID_SDK_ROOT}/ndk-bundle/build/cmake/android.toolchain.cmake 
           cmakeAppendedArgs:
