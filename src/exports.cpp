@@ -27,7 +27,8 @@
 #endif
 
 const WCHAR_T *GetClassNames() {
-    static char16_t cls_names[] = u"Sample|SampleAlias";
+    // Might contain multiple class names seperated by |
+    static char16_t cls_names[] = u"Sample";
     return reinterpret_cast<WCHAR_T *>(cls_names);
 }
 
@@ -35,8 +36,6 @@ long GetClassObject(const WCHAR_T *clsName, IComponentBase **pInterface) {
     if (!*pInterface) {
         auto cls_name = std::u16string(reinterpret_cast<const char16_t *>(clsName));
         if (cls_name == u"Sample") {
-            *pInterface = new SampleAddIn;
-        } else if (cls_name == u"SampleAlias") {
             *pInterface = new SampleAddIn;
         }
         return (long) *pInterface;
