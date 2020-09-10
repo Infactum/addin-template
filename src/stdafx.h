@@ -1,5 +1,5 @@
-#ifndef __STDAFX_H__
-#define __STDAFX_H__
+#ifndef STDAFX_H
+#define STDAFX_H
 
 #ifdef _WINDOWS
 
@@ -7,4 +7,4 @@
 
 #endif //_WINDOWS
 
-#endif //__STDAFX_H__
+#endif //STDAFX_H
