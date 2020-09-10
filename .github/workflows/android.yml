@@ -17,8 +17,8 @@ jobs:
         with:
           buildDirectory: ${{ runner.workspace }}/build
           cmakeListsOrSettingsJson: CMakeListsTxtAdvanced 
-          cmakeBuildType: Release
-          cmakeToolchainPath: ${ANDROID_SDK_ROOT}/ndk-bundle/build/cmake/android.toolchain.cmake 
           cmakeAppendedArgs:
+            -DCMAKE_TOOLCHAIN_FILE=${ANDROID_SDK_ROOT}/ndk-bundle/build/cmake/android.toolchain.cmake
             -DANDROID_ABI=${{ matrix.abi }}
             -DANDROID_NATIVE_API_LEVEL=16
+            -DCMAKE_BUILD_TYPE=Release
