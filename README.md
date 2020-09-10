@@ -1,4 +1,5 @@
-![CI](https://github.com/Infactum/addin-template/workflows/CI/badge.svg?branch=master)
+![Desktop CI](https://github.com/Infactum/addin-template/workflows/Desktop%20CI/badge.svg)
+![Mobile CI](https://github.com/Infactum/addin-template/workflows/Mobile%20CI/badge.svg)
 
 # Modern Native AddIn
 
