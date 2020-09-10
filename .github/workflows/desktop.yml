@@ -1,4 +1,4 @@
-name: CI
+name: Desktop
 
 on: [push, pull_request]
 
