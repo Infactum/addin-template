@@ -7,10 +7,11 @@ See more info about AddIn development [here](https://support.1ci.com/hc/en-us/se
 
 ## Supported platforms
 
-✔️ Windows  
-✔️ Linux  
-⚠️ MacOS (compiled but not tested)  
-❌ Mobile  
+✔ Windows  
+✔ Linux  
+⚠ MacOS (compiled but not tested)  
+✔ Android  
+❌ iOS  
 ❌ Browser Extenstions
 
 ## License exclusions
