@@ -456,3 +456,27 @@ std::u16string Component::toUTF16String(std::string_view src) {
     return cvt_utf8_utf16.from_bytes(src.data(), src.data() + src.size());
 #endif
 }
+
+bool Component::SetEventBufferDepth(long lDepth)
+{
+    if (connection != nullptr)
+    {
+        return connection->SetEventBufferDepth(lDepth);
+    }
+    else
+    {
+        return false;
+    }
+}
+
+long Component::GetEventBufferDepth()
+{
+    if (connection != nullptr)
+    {
+        return connection->GetEventBufferDepth();
+    }
+    else
+    {
+        return -1;
+    }
+}

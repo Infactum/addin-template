@@ -97,6 +97,10 @@ public:
     bool ADDIN_API CallAsFunc(const long method_num, tVariant *ret_value, tVariant *params,
                               const long array_size) final;
 
+    bool SetEventBufferDepth(long lDepth);
+
+    long GetEventBufferDepth();
+
 protected:
     virtual std::string extensionName() = 0;
 
