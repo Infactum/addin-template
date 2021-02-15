@@ -281,6 +281,14 @@ bool Component::ExternalEvent(const std::string &src, const std::string &msg, co
     return success;
 }
 
+bool Component::SetEventBufferDepth(long depth) {
+    return connection->SetEventBufferDepth(depth);
+}
+
+long Component::GetEventBufferDepth() {
+    return connection->GetEventBufferDepth();
+}
+
 void Component::AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
                             std::function<std::shared_ptr<variant_t>(void)> getter,
                             std::function<void(variant_t &&)> setter) {
