@@ -104,6 +104,10 @@ protected:
 
     bool ExternalEvent(const std::string &src, const std::string &msg, const std::string &data);
 
+    bool SetEventBufferDepth(long depth);
+
+    long GetEventBufferDepth();
+
     void AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
                      std::function<std::shared_ptr<variant_t>(void)> getter = nullptr,
                      std::function<void(variant_t &&)> setter = nullptr);
@@ -114,10 +118,6 @@ protected:
     template<typename T, typename C, typename ... Ts>
     void AddMethod(const std::wstring &alias, const std::wstring &alias_ru, C *c, T(C::*f)(Ts ...),
                    std::map<long, variant_t> &&def_args = {});
-
-    bool SetEventBufferDepth(long lDepth);
-
-    long GetEventBufferDepth();
 
 private:
     class PropertyMeta;

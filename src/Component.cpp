@@ -281,6 +281,14 @@ bool Component::ExternalEvent(const std::string &src, const std::string &msg, co
     return success;
 }
 
+bool Component::SetEventBufferDepth(long depth) {
+    return connection->SetEventBufferDepth(depth);
+}
+
+long Component::GetEventBufferDepth() {
+    return connection->GetEventBufferDepth();
+}
+
 void Component::AddProperty(const std::wstring &alias, const std::wstring &alias_ru,
                             std::function<std::shared_ptr<variant_t>(void)> getter,
                             std::function<void(variant_t &&)> setter) {
@@ -455,28 +463,4 @@ std::u16string Component::toUTF16String(std::string_view src) {
     static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cvt_utf8_utf16;
     return cvt_utf8_utf16.from_bytes(src.data(), src.data() + src.size());
 #endif
-}
-
-bool Component::SetEventBufferDepth(long lDepth)
-{
-    if (connection != nullptr)
-    {
-        return connection->SetEventBufferDepth(lDepth);
-    }
-    else
-    {
-        return false;
-    }
-}
-
-long Component::GetEventBufferDepth()
-{
-    if (connection != nullptr)
-    {
-        return connection->GetEventBufferDepth();
-    }
-    else
-    {
-        return -1;
-    }
 }
