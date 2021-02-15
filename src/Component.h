@@ -97,10 +97,6 @@ public:
     bool ADDIN_API CallAsFunc(const long method_num, tVariant *ret_value, tVariant *params,
                               const long array_size) final;
 
-    bool SetEventBufferDepth(long lDepth);
-
-    long GetEventBufferDepth();
-
 protected:
     virtual std::string extensionName() = 0;
 
@@ -118,6 +114,10 @@ protected:
     template<typename T, typename C, typename ... Ts>
     void AddMethod(const std::wstring &alias, const std::wstring &alias_ru, C *c, T(C::*f)(Ts ...),
                    std::map<long, variant_t> &&def_args = {});
+
+    bool SetEventBufferDepth(long lDepth);
+
+    long GetEventBufferDepth();
 
 private:
     class PropertyMeta;
