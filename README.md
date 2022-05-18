@@ -1,5 +1,6 @@
 ![Desktop CI](https://github.com/Infactum/addin-template/workflows/Desktop%20CI/badge.svg)
 ![Mobile CI](https://github.com/Infactum/addin-template/workflows/Mobile%20CI/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ksv87_addin-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ksv87_addin-template)
 
 # Modern Native AddIn
 
