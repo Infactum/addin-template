@@ -99,8 +99,13 @@ const WCHAR_T *Component::GetPropName(long num, long lang_alias) {
     }
 
     WCHAR_T *result = nullptr;
+#ifdef _WINDOWS
     storeVariable(std::u16string(reinterpret_cast<const char16_t *>(name->c_str())), &result);
-
+#else
+    std::u16string u16name(name->begin(), name->end());
+    storeVariable(u16name, &result);
+#endif
+    
     return result;
 }
 
@@ -183,7 +188,12 @@ const WCHAR_T *Component::GetMethodName(const long num, const long lang_alias) {
     }
 
     WCHAR_T *result = nullptr;
+#ifdef _WINDOWS
     storeVariable(std::u16string(reinterpret_cast<const char16_t *>(name->c_str())), &result);
+#else
+    std::u16string u16name(name->begin(), name->end());
+    storeVariable(u16name, &result);
+#endif
 
     return result;
 
