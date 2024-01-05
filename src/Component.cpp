@@ -464,3 +464,13 @@ std::u16string Component::toUTF16String(std::string_view src) {
     return cvt_utf8_utf16.from_bytes(src.data(), src.data() + src.size());
 #endif
 }
+
+void Component::SetUserInterfaceLanguageCode(const wchar_t *lang) {
+#ifdef CASE_INSENSITIVE
+    try {
+        std::locale::global(std::locale{toUTF8String(locale)});
+    } catch (std::runtime_error &) {
+        std::locale::global(std::locale{""});
+    }
+#endif
+}
