@@ -3,6 +3,7 @@ project(SampleAddIn)
 
 set(CMAKE_CXX_STANDARD 17)
 set(TARGET SampleAddIn)
+set(ATTACH_TYPE "ANY" CACHE STRING "Attach type: ISOLATED | NOT_ISOLATED | ANY (default)")
 
 option(CASE_INSENSITIVE "Case insensitive method names" OFF)
 option(STATIC_CRT "Static CRT linkage" OFF)
@@ -26,6 +27,24 @@ endif ()
 
 add_library(${TARGET} SHARED
         ${SOURCES})
+
+set(ATTACH_TYPE_ANY 0)
+set(ATTACH_TYPE_ISOLATED 1)
+set(ATTACH_TYPE_NOT_ISOLATED 2)
+
+target_compile_definitions(${TARGET} PRIVATE ATTACH_TYPE_ANY=${ATTACH_TYPE_ANY})
+target_compile_definitions(${TARGET} PRIVATE ATTACH_TYPE_ISOLATED=${ATTACH_TYPE_ISOLATED})
+target_compile_definitions(${TARGET} PRIVATE ATTACH_TYPE_NOT_ISOLATED=${ATTACH_TYPE_NOT_ISOLATED})
+
+if (${ATTACH_TYPE} STREQUAL "ANY")
+    set(ATTACH_TYPE ${ATTACH_TYPE_ANY})
+elseif (${ATTACH_TYPE} STREQUAL "ISOLATED")
+    set(ATTACH_TYPE ${ATTACH_TYPE_ISOLATED})
+elseif (${ATTACH_TYPE} STREQUAL "NOT_ISOLATED")
+    set(ATTACH_TYPE ${ATTACH_TYPE_NOT_ISOLATED})
+else()
+    message(FATAL_ERROR "Unrecognized ATTACH_TYPE ${ATTACH_TYPE}")
+endif ()
 
 target_compile_definitions(${TARGET} PRIVATE
         UNICODE
@@ -51,9 +70,10 @@ if (WIN32)
         string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
         string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
     endif ()
+    # https://stackoverflow.com/questions/11040133/what-does-defining-win32-lean-and-mean-exclude-exactly
     target_compile_definitions(${TARGET} PRIVATE
             _WINDOWS
-            _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+            _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING WIN32_LEAN_AND_MEAN)
     target_compile_options(${TARGET} PRIVATE /utf-8)
 endif ()
 

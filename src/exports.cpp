@@ -56,3 +56,15 @@ long DestroyObject(IComponentBase **pInterface) {
 AppCapabilities SetPlatformCapabilities(const AppCapabilities capabilities) {
     return eAppCapabilitiesLast;
 }
+
+AttachType GetAttachType() {
+#if ATTACH_TYPE == ATTACH_TYPE_ANY
+    return eCanAttachAny;
+#elif ATTACH_TYPE == ATTACH_TYPE_ISOLATED
+    return eCanAttachIsolated;
+#elif ATTACH_TYPE == ATTACH_TYPE_NOT_ISOLATED
+    return eCanAttachNotIsolated;
+#else
+#error "Unrecognized ATTACH_TYPE"
+#endif
+}

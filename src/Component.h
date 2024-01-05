@@ -96,6 +96,7 @@ public:
 
     bool ADDIN_API CallAsFunc(const long method_num, tVariant *ret_value, tVariant *params,
                               const long array_size) final;
+    void ADDIN_API SetUserInterfaceLanguageCode(const wchar_t *lang) final;
 
 protected:
     virtual std::string extensionName() = 0;
